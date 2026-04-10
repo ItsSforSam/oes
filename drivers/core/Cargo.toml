@@ -1,0 +1,11 @@
+[package]
+name = "oes-drivers-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+uefi = {workspace = true, optional = true}
+cfg-if ={workspace = true}
+[features]
+uefi = ["dep:uefi"]

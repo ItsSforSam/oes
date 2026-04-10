@@ -1,0 +1,13 @@
+[alias]
+# Sense we arn't building for std, just to avoid the additional overhead we build for a single target
+c = "clippy --target=x86_64-unknown-none"
+
+[unstable]
+
+build-std = ["core","alloc",
+# We disable this due to building overhead, BUT if just checking on a platform, but unfortunately for some reason, even optional
+# depends off of std, still try to pull in std, which is the one in the tool chain, links to libcore, but uses the one in the 
+# toolchain, leading to duplicate lang items defined
+# "std" 
+
+]

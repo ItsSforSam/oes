@@ -1,0 +1,10 @@
+[package]
+name = "oes-init-start"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[dependencies]
+oes-init-start-impl = {path = "../start-impl"}
+
+[features]
+uefi =["oes-init-start-impl/uefi"]

@@ -1,0 +1,17 @@
+[package]
+name = "oes-arch"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+oes-arch-common ={path = "common"}
+
+[target.'cfg(target_arch = "x86_64")'.dependencies]
+oes-arch-x86 = {path = "x86"}
+
+[features]
+uefi = ["oes-arch-common/uefi"]

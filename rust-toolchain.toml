@@ -1,0 +1,12 @@
+[toolchain]
+channel = "nightly-2026-04-08"
+targets = [
+    "x86_64-unknown-none",
+    "x86_64-unknown-uefi"
+    
+    ]
+components = [
+    "default",
+    "rust-src" # For -Z build-std
+    
+    ]

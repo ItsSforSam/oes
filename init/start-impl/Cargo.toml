@@ -1,0 +1,13 @@
+[package]
+name = "oes-init-start-impl"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+oes-arch = {path = "../../arch"}
+[lints]
+workspace = true
+
+[features]
+uefi = ["oes-arch/uefi"]
