@@ -29,3 +29,5 @@ pub unsafe extern "C-unwind" fn start_kernel() -> ! {
 fn panic_handler(_: &core::panic::PanicInfo) -> ! {
     loop {}
 }
+#[used]
+static GIT_COMMIT: &str = env!("GIT_COMMIT");
