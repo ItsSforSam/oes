@@ -4,6 +4,7 @@
 #![no_main]
 unsafe extern "C-unwind" {
     // Read it's docs to ensure
+    #[allow(unused)]
     pub(crate) unsafe fn start_kernel() -> !;
 }
 #[cfg(feature = "uefi")]
