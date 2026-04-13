@@ -22,12 +22,18 @@ use oes_arch as _;
 // Makes sure each arch updates this if a signature changes
 #[unsafe(no_mangle)]
 pub unsafe extern "C-unwind" fn start_kernel() -> ! {
-    loop {}
+    loop {
+        //@TODO: Call initilizers and start up the kernel's runtime and the init binary
+        core::hint::spin_loop();
+    }
 }
 #[cfg_attr(not(test), panic_handler)]
 #[cfg_attr(not(test), expect(dead_code))]
 fn panic_handler(_: &core::panic::PanicInfo) -> ! {
-    loop {}
+    loop {
+        //@TODO: implement proper panic handler
+        core::hint::spin_loop();
+    }
 }
 #[used]
 static GIT_COMMIT: &str = env!("GIT_COMMIT");
