@@ -3,6 +3,7 @@
 use core::{
     any::{Any, TypeId},
     cell::UnsafeCell,
+    ffi::c_void,
     marker::PhantomPinned,
     mem::MaybeUninit,
 };
@@ -11,21 +12,19 @@ pub mod generic;
 use core::marker::{Send, Sync};
 
 // use downcast_rs::{Downcast, impl_downcast};
-/// Used as an opaque reference to a type
-pub unsafe trait Device: Sync + Send {
-    fn init(&mut self) -> Result<(), error::DeviceError>;
-}
-impl dyn Device {
-    // We implement this to have a dyn Device to be moved around opaque
-    pub fn is<T: Device + Any>(&self) -> bool {
-        self.type_id() == TypeId::of::<T>()
-    }
-
-    pub fn downcast_unchecked_ref<T: Device + Any>(&self) -> &T {
-        debug_assert!(self.is::<T>());
-        // SAFETY: caller guarantees that T is the correct type
-        unsafe { &*(self as *const dyn Device as *const T) }
-    }
+/// Generic Driver trait
+///
+///
+/// This is used to initialize a driver.
+///
+///
+/// If there any need for special cleanup if the driver
+/// is unloaded, implement [`Drop`]
+///
+/// # SAFETY
+///
+pub unsafe trait Driver: Sized {
+    fn init() -> Result<Self, error::DeviceError>;
 }
 // impl_downcast!(Device);
 #[repr(transparent)]
@@ -56,5 +55,50 @@ impl<T> Opaque<T> {
         }
     }
 }
+#[derive(PartialEq, Eq, Default, Debug)]
+pub enum DriverState {
+    /// Not done initializing
+    #[default]
+    NotDone,
+    /// The driver is fully live and formed
+    Live,
+    /// Unloading for one reason or another
+    Unloading,
+}
+impl DriverState {
+    /// Turns [`DriverState`] into [`Live`][DriverState::Live]
+    pub fn done(&mut self) {
+        debug_assert!(*self != DriverState::NotDone);
+        *self = DriverState::Live
+    }
+}
+/// The internally stored kernel object
+///
+pub struct DriverObject<'obj> {
+    pub name: &'obj str,
+    pub state: DriverState,
+    /// This is the drop code for a module
+    pub unload: Option<unsafe fn(*mut ())>,
+}
+impl Default for DriverObject<'_> {
+    #[inline]
+    fn default() -> Self {
+        DriverObject {
+            name: "",
+            state: DriverState::NotDone,
+            unload: None,
+        }
+    }
+}
 
-pub trait Display: Device {}
+trait StoreDriver {
+    fn store_into(&mut self, obj: &mut DriverObject);
+}
+
+impl<T: Driver> StoreDriver for T {
+    fn store_into(&mut self, obj: &mut DriverObject) {
+        let drop_code: unsafe fn(_) = core::mem::drop::<Self>;
+        // SAFETY: raw pointers have same size as references
+        obj.unload = Some(unsafe { core::mem::transmute(drop_code) })
+    }
+}

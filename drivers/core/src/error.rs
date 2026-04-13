@@ -1,6 +1,13 @@
 use core::fmt;
 #[derive(Debug)]
-pub struct DeviceError {}
+pub enum DeviceInitError {
+    AlreadyInitialized,
+    /// Some other error relating to the driver
+    Other(DeviceError),
+}
+
+#[derive(Debug)]
+pub enum DeviceError {}
 
 impl core::error::Error for DeviceError {}
 
