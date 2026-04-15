@@ -7,4 +7,5 @@
     "rust-analyzer.cargo.target": "x86_64-unknown-none",
     // https://github.com/rust-lang/vscode-rust/issues/729
     "rust-analyzer.cargo.allTargets": false,
+    "rust-analyzer.check.command": "clippy",
 }
