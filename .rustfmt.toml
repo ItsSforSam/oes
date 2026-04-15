@@ -11,7 +11,7 @@ newline_style = "Unix"
 tab_spaces = 4
 
 # Just maninly format when it fits
-fn_call_width = "off"
+use_small_heuristics = "Off"
 # Unstable but if tracked here
 # https://github.com/rust-lang/rustfmt/issues/3347
 # plaining to enable if it works the way I'm expecting it
