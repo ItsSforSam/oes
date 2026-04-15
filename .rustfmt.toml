@@ -1,0 +1,20 @@
+edition = "2024"
+# 100 is default, but just having
+# it be explicit incases default changes
+# (it shouldn't) but it's also nice
+# to just have it written out
+max_width = 100
+
+# Use \n instead of \r\n of windows
+# Kept in sync with .editorconfig
+newline_style = "Unix"
+tab_spaces = 4
+
+# Just maninly format when it fits
+fn_call_width = "off"
+# Unstable but if tracked here
+# https://github.com/rust-lang/rustfmt/issues/3347
+# plaining to enable if it works the way I'm expecting it
+# to work
+# wrap_comments = true
+# comment_width = 100 # Use the max_width
