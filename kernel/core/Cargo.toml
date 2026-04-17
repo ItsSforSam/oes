@@ -1,0 +1,12 @@
+[package]
+name = "oes-kernel-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# Be carful adding ANY workspace dependencies
+oes-drivers-core = {path = "../../drivers/core"}
+spin = {workspace = true, features = ["mutex","spin_mutex"]}
+[lints]
+workspace = true
