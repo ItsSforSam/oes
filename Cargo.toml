@@ -10,6 +10,7 @@ members = [
     "arch/common",
     "arch/x86",
     "drivers/core",
+    "kernel/core"
     ]
 default-members = ["init/start"]
 
@@ -23,8 +24,12 @@ license = "MIT OR Apache-2.0"
 uefi = {version = "0.37.0", default-features = false}
 cfg-if = {version = "1"}
 bytemuck = {version = "1", default-features = false, features = ["derive"]}
+spin = {version = "0.10", default-features = false}
+cc = {version = "1", features = ["parallel"]} # for build scripts
 [workspace.lints.clippy]
 arithmetic_side_effects = "deny"
+# Default usually implies no major allocations take place, which can simply not be true
+new_without_default = "allow"
 
 [profile.dev]
 panic = "abort"
