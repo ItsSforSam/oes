@@ -9,7 +9,8 @@ workspace = true
 
 [dependencies]
 oes-arch-common ={path = "common"}
-
+cfg-if = {workspace = true}
+bytemuck = {workspace = true}
 [target.'cfg(target_arch = "x86_64")'.dependencies]
 oes-arch-x86 = {path = "x86"}
 

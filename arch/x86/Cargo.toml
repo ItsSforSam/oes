@@ -7,8 +7,10 @@ license.workspace = true
 [lints]
 workspace = true
 
-[dependencies]
-uefi = {workspace = true, optional = true}
-
 [features]
-uefi = ["dep:uefi"]
+
+[build-dependencies]
+cc = {workspace = true}
+
+[dependencies]
+x86_64 = "0.15.4"
