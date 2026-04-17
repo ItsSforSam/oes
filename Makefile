@@ -3,7 +3,11 @@ default: oes-kernel
 
 
 oes-kernel:
-	cargo build -p oes-init-start --target=$(target) --features=uefi --verbose
+	cargo build -p oes-init-start --target=$(target) --features=uefi
 	target/$(target)/debug/oes-init-start
 
-.PHONEY: default oes-kernel
+clean:
+	cargo clean
+
+.PHONEY: default oes-kernel clean
+
