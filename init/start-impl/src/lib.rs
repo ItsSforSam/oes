@@ -1,5 +1,6 @@
 #![no_main]
 #![no_std]
+pub(crate) mod panicking;
 
 use oes_arch as _;
 // use oes_arch::common::uefi::main as _;
@@ -27,13 +28,6 @@ pub unsafe extern "C-unwind" fn start_kernel() -> ! {
         core::hint::spin_loop();
     }
 }
-#[cfg_attr(not(test), panic_handler)]
-#[cfg_attr(not(test), expect(dead_code))]
-fn panic_handler(_: &core::panic::PanicInfo) -> ! {
-    loop {
-        //@TODO: implement proper panic handler
-        core::hint::spin_loop();
-    }
-}
+
 #[used]
 static GIT_COMMIT: &str = env!("GIT_COMMIT");
