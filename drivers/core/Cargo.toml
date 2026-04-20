@@ -9,3 +9,6 @@ uefi = {workspace = true, optional = true}
 cfg-if ={workspace = true}
 [features]
 uefi = ["dep:uefi"]
+
+[lints]
+workspace = true
