@@ -79,12 +79,18 @@ impl fmt::Write for dyn Write + '_ {
         }
     }
 }
+/// Creates a value that
 #[doc(alias = "empty")]
 pub const fn no_op() -> NoOp {
     NoOp
 }
 
+/// `NoOp` ignores any data written to via [`Write`] and data will always
+/// be empty if read.
+/// This struct is constructed by [`no_op()`] function.
+/// Read the documentation of [`no_op()`] for more details
 #[doc(alias = "Empty")]
+#[derive(Debug, Default, Clone, Copy)]
 #[non_exhaustive]
 pub struct NoOp;
 
