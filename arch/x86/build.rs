@@ -6,7 +6,12 @@ fn main() {
     .files([
         "entry.S",
 
-    ]).try_compile("generated");
+    ])
+    .flags([
+        "-ffreestanding",
+        "-Wall", "-Wextra"
+        ])
+    .try_compile("generated");
 
     if let Err(e) = r {
         panic!("The building of the x86_64 assembly code. Error {}", e)
