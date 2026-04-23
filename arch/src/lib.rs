@@ -1,4 +1,6 @@
 // This re-exports all the architecture specific
+// This is a meta package. This allows each architecture to have their own build scripts and
+// use the common the crate if needed
 #![no_std]
 
 cfg_if::cfg_if! {
