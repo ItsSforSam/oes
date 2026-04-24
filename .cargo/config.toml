@@ -1,6 +1,6 @@
 [alias]
 # Sense we arn't building for std, just to avoid the additional overhead we build for a single target
-c = "clippy --target=x86_64-unknown-none"
+c = "clippy --target=x86_64-unknown-none --workspace --no-deps"
 
 [unstable]
 
@@ -10,7 +10,7 @@ build-std = ["core","alloc", "compiler_builtins"
 # toolchain, leading to duplicate lang items defined
 # "std" 
 ]
-build-std-features =[ "alloc/compiler-builtins-mem"]
+build-std-features =[ "compiler-builtins-mem"]
 
 [build]
 # gimli breaks as it uses functions not included with cfg(no_global_oom_handling)
