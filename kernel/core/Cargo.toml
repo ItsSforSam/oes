@@ -7,6 +7,10 @@ license.workspace = true
 [dependencies]
 # Be carful adding ANY workspace dependencies
 oes-drivers-core = {path = "../../drivers/core"}
-spin = {workspace = true, features = ["mutex","spin_mutex"]}
+spin = {workspace = true, features = ["mutex","ticket_mutex"]}
+ringbuf = {workspace = true}
 [lints]
 workspace = true
+
+[features]
+alloc = []
