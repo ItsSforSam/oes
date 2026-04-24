@@ -4,6 +4,7 @@
 #![feature(abi_x86_interrupt)]
 
 pub(crate) mod interrupts;
+pub mod mem;
 pub mod paging;
 /// The current Interrupt Descriptor Table
 ///
