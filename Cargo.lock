@@ -170,6 +170,9 @@ dependencies = [
 [[package]]
 name = "oes-mm-core"
 version = "0.0.0"
+dependencies = [
+ "oes-arch",
+]
 
 [[package]]
 name = "proc-macro2"
