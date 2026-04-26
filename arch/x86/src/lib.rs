@@ -7,6 +7,7 @@ pub(crate) mod interrupts;
 pub mod mem;
 pub(crate) mod multiboot;
 pub mod paging;
+pub mod vga;
 /// The current Interrupt Descriptor Table
 ///
 /// # Sync-ness
