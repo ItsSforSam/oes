@@ -25,6 +25,7 @@ pub mod common {
 
     /// Use [`memcmp`] whenever possible. This definition is simply here for completeness
     #[deprecated = "bcmp() is identical to memcmp(); use the latter instead."]
+    #[expect(deprecated)]
     pub unsafe fn bcmp(s1: *const u8, s2: *const u8, size: usize) -> i32 {
         // SAFETY: caller guarantees safety requirements
         unsafe { current::mem::bcmp(s1, s2, size) }
@@ -127,7 +128,7 @@ pub mod common {
 
     unsafe extern "Rust" {
         /// See [`oes-kernel-core::abort()`] for details, as this is an alias to that
-        /// 
+        ///
         /// [`oes-kernel-core::abort()`]
         pub unsafe fn abort() -> !;
     }
