@@ -59,6 +59,7 @@ pub mod common {
     // the standard. (Which is why this isn't included in the docs)
     // https://doc.rust-lang.org/core/#how-to-use-the-core-library
     /// [man page]: https://man.archlinux.org/man/memcmp.3.en
+    /// [`c_uchar`]:core::ffi::c_uchar
     pub unsafe fn memcmp(s1: *const u8, s2: *const u8, size: usize) -> i32 {
         unsafe { current::mem::memcmp(s1, s2, size) }
     }
@@ -122,5 +123,12 @@ pub mod common {
     /// [strndup(3p)]: https://man.archlinux.org/man/strdup.3p.en
     pub unsafe fn strlen(s: *const i8) -> usize {
         unsafe { current::mem::strlen(s) }
+    }
+
+    unsafe extern "Rust" {
+        /// See [`oes-kernel-core::abort()`] for details, as this is an alias to that
+        /// 
+        /// [`oes-kernel-core::abort()`]
+        pub unsafe fn abort() -> !;
     }
 }
