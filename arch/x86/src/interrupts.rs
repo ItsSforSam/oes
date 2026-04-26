@@ -40,3 +40,7 @@ impl AsMut<idt::InterruptDescriptorTable> for Idt {
         &mut self.inner
     }
 }
+
+extern "x86-interrupt" fn double_fault(frame: idt::InterruptStackFrame) -> ! {
+    todo!()
+}

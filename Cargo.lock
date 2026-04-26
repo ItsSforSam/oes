@@ -131,6 +131,7 @@ dependencies = [
 name = "oes-arch-x86"
 version = "0.0.0"
 dependencies = [
+ "bytemuck",
  "cc",
  "x86_64",
 ]
@@ -162,6 +163,7 @@ dependencies = [
 name = "oes-kernel-core"
 version = "0.0.0"
 dependencies = [
+ "cfg-if",
  "oes-drivers-core",
  "ringbuf",
  "spin",

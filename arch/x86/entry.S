@@ -37,6 +37,11 @@ _start:
     *
     */
     mov $stack_top, %esp
+    // A Multiboot2-compliant bootloader provides an information structure when the kernel boots
+    // A pointer is stored in EBX, while the magic number is stored in
+    // EAX
+    mov %ebx, %rdi // %rdi is first param of C-abi
+
 
     // Initialize paging, and segmentation interrupts will be enabled inside
     // kernel_main
