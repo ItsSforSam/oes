@@ -76,13 +76,7 @@ core::arch::global_asm! {
 "stack_top:",
 options(att_syntax)
 }
-// // ".section .text",
-// // ".type _start, @function",
-// // ".global _start",
-// }
-// THIS CAUSES FAILS TO COMPILES
-// IDK WHY, IT SHOULD BE VALID
-// BUT CAUSES A LINKER ERROR
+
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 unsafe extern "custom" fn _start() {
@@ -93,7 +87,7 @@ unsafe extern "custom" fn _start() {
         * Interrupts and paging are disabled
         *
         */
-        "mov $stack_top, %esp",
+        "mov stack_top(%rip), %esp",
         // A Multiboot2-compliant bootloader provides an information structure when the kernel boots
         // A pointer is stored in EBX, while the magic number is stored in
         // EAX
