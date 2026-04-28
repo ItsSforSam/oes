@@ -110,6 +110,9 @@ unsafe extern "custom" fn _start() {
      * This is useful when debugging or when you implement call tracing.
      * ALSO! There was an error with the
     */
+    // For some reason, this isn't seen as correct on x86-64-unknown-uefi target but
+    // on the -none target it is?
+    #[cfg(not(target_os = "uefi"))]
     ".size _start, . - _start",
     // mboot = sym __x86_store_multiboot2,
     kernel_main = sym start_kernel,
