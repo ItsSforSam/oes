@@ -22,6 +22,12 @@ pub mod common {
     // The normal comments mixed with the docs is included in such
     // It's not yet decide if details implementers should account for
     // in the actual doc, or left in comments
+    // The mem functions (which is [`bcmp`],[`memcmp`],[`memmove`],[`memset`],[`strlen`])
+    // Which need to attributed with `#[unsafe(no_mangle)]`, to compiler inserts to the functions
+    // use our functions (since they are required by compiler)
+    // `#[cfg_attr(not(test),unsafe(no_mange))]` instead to avoid overloading libc's
+    // functions from the host, AND tests are free to use libc's functions to compare
+    //
 
     /// Use [`memcmp`] whenever possible. This definition is simply here for completeness
     #[deprecated = "bcmp() is identical to memcmp(); use the latter instead."]
@@ -131,5 +137,15 @@ pub mod common {
         ///
         /// [`oes-kernel-core::abort()`]
         pub unsafe fn abort() -> !;
+    }
+}
+#[cfg(test)]
+#[expect(clippy::undocumented_unsafe_blocks, reason = "We are testing here.")]
+mod tests {
+    use super::common::*;
+    use super::*;
+    #[test]
+    fn test_empty_strlen() {
+        assert_eq!(common::strlen())
     }
 }
