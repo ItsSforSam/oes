@@ -2,10 +2,12 @@
 #![no_main]
 #![feature(abi_custom)]
 #![feature(abi_x86_interrupt)]
-
+#![feature(arbitrary_self_types_pointers)]
+// NOTE: due to how optimization passes work, builtins can still be called
+// These simply get hindered...slightly. These are used for the mem module which contain alternatives to
+#![no_builtins]
 pub(crate) mod interrupts;
 pub mod mem;
-pub(crate) mod multiboot;
 pub mod paging;
 pub mod vga;
 /// The current Interrupt Descriptor Table
@@ -27,7 +29,7 @@ unsafe extern "C" {
 ///
 /// # SAFETY
 /// This should only be called once. Multiple calls can
-/// cause reinitializing hardware and have internal states be inconstant
+/// ng hardware and have internal states be inconstant
 /// or corrupted
 #[rustfmt::skip]
 pub unsafe fn init_hardware() {
@@ -54,21 +56,20 @@ core::arch::global_asm! {
 ".set MEMINFO,   1<<1", /* Memory Map*/
 ".set FLAGS,     ALIGN|MEMINFO",
 ".set MAGIC,     0x1BADB002", /* Magic */
+".set CHECKSUM, -(MAGIC + FLAGS)",
 ".section .multiboot",
 ".align 4",
 ".long MAGIC",
 ".long FLAGS",
 ".long CHECKSUM",
-}
-core::arch::global_asm! {
-    "",
 /*
- * multiboot standard does not define a value for esp.
- *
- * This allocates room for a small stack then allocating 16384 bytes
- *
- * This also allows the stack to be 16 bit aligned
+* multiboot standard does not define a value for esp.
+*
+* This allocates room for a small stack then allocating 16384 bytes
+*
+* This also allows the stack to be 16 bit aligned
 */
+
 ".section .bss",
 ".align 16",
 "stack_bottom:",
@@ -81,6 +82,8 @@ options(att_syntax)
 #[unsafe(naked)]
 unsafe extern "custom" fn _start() {
     core::arch::naked_asm! {
+
+
         /*
         * We are currently in 32-bit protected mode on x86
         *
@@ -95,7 +98,7 @@ unsafe extern "custom" fn _start() {
         "jne .L3",
         "mov -16(%ebx), %rdi", // %rdi is first param of C-abi
 
-        // "call {mboot}",
+        "call {mboot}",
     ".L3:",
 
         // Initialize paging, and segmentation interrupts will be enabled inside
@@ -114,7 +117,7 @@ unsafe extern "custom" fn _start() {
     // on the -none target it is?
     #[cfg(not(target_os = "uefi"))]
     ".size _start, . - _start",
-    // mboot = sym __x86_store_multiboot2,
+    mboot = sym __x86_store_multiboot2,
     kernel_main = sym start_kernel,
     options(att_syntax)
         }
