@@ -4,6 +4,7 @@
 #![feature(core_intrinsics)]
 #![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![no_std]
+pub mod error;
 pub mod printk;
 pub mod sched;
 pub mod sync;
