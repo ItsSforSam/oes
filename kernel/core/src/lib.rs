@@ -5,10 +5,10 @@
 #![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![no_std]
 pub mod error;
+pub mod panicking;
 pub mod printk;
 pub mod sched;
 pub mod sync;
-
 // #[cfg(feature = "alloc")] // We use it regardless
 extern crate alloc as liballoc;
 #[cfg(feature = "alloc")]

@@ -1,6 +1,5 @@
 #![no_main]
 #![no_std]
-pub(crate) mod panicking;
 
 use oes_arch as _;
 // use oes_arch::common::uefi::main as _;
