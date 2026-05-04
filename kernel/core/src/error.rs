@@ -88,17 +88,23 @@ CouldNotExec = ENOEXEC    27         "File Found, but could not be executed";
 #[doc(alias="ENXIO")]
 = ENXIO      30         "No such device or address";
 NoTTY= ENOTTY     31         "Inappropriate ioctl for device";
-
-
-
-// Super Specific, used by very few syscalls (or for specific edge cases)
-
-
-
 NameTooLong = ENAMETOOLONG    141 "File name is too long";
 
 // = ENOANO          142 "No Anode";
 
 NotRecoverable = ENOTRECOVERABLE 143 "State not recoverable";
 
+};
+
+pub trait ToErrno{
+    fn into_errno(self) -> Errno;
+    fn as_errno(&self) -> &Errno;
+}
+impl ToErrno for Errno{
+    fn into_errno(self)-> Errno{
+        self
+    }
+    fn as_errno(&self) -> &Errno{
+        &self
+    }
 }
