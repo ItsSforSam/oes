@@ -4,7 +4,10 @@
 		{
 			"type": "cargo",
 			"command": "build",
-			"args": ["--target=x86_64-unknown-none"],
+			"args": [
+				"--target=x86_64-unknown-none",
+				"-Zbuild-std=core,alloc",
+			],
 			"problemMatcher": [
 				"$rustc"
 			],
@@ -13,6 +16,73 @@
 				"isDefault": true
 			},
 			"label": "rust: cargo build"
-		}
+		},
+		{
+			"type": "cargo",
+			"command": "clippy",
+			"args": [
+				"--no-deps",
+				"--workspace",
+				"--target=x86_64-unknown-none",
+			],
+			"label": "rust: clippy",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"type": "cargo",
+			"command": "clippy",
+			"args": [
+				"--no-deps",
+				"--workspace",
+				
+				"--target=x86_64-unknown-none",
+				"--", "-A", "clippy::all"
+			],
+			"label": "rust: build check (clippy)",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			},
+			"detail": "Simply run clippy with all warnings hidden. Checking if it simply builds"
+		},
+		{
+			"type": "cargo",
+			"command": "test",
+			"args": [
+				"--no-fail-fast",
+				"--all-features"
+			],
+			"problemMatcher": [
+				"$rustc",
+				"$rust-panic",
+			],
+			"label": "rust: test",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Runs all tests",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false,
+				"revealProblems": "onProblem",
+			},
+			
+		},
+		
+		
 	]
 }
