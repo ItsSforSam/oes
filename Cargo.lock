@@ -260,7 +260,8 @@ name = "oes-init-start-impl"
 version = "0.0.0"
 dependencies = [
  "oes-arch",
- "unwinding",
+ "oes-kernel-core",
+ "oes-mm-core",
 ]
 
 [[package]]
@@ -271,6 +272,7 @@ dependencies = [
  "oes-drivers-core",
  "ringbuf",
  "spin",
+ "unwinding",
 ]
 
 [[package]]
