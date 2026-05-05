@@ -31,6 +31,7 @@ pub mod common {
 
     /// Use [`memcmp`] whenever possible. This definition is simply here for completeness
     #[deprecated = "bcmp() is identical to memcmp(); use the latter instead."]
+    #[expect(clippy::missing_panics_doc)]
     #[expect(deprecated)]
     pub unsafe fn bcmp(s1: *const u8, s2: *const u8, size: usize) -> i32 {
         // SAFETY: caller guarantees safety requirements
