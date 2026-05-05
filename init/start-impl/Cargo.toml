@@ -6,6 +6,8 @@ license.workspace = true
 
 [dependencies]
 oes-arch = {path = "../../arch"}
+oes-kernel-core = {path = "../../kernel/core"}
+oes-mm-core = {path = "../../mm/core"}
 [lints]
 workspace = true
 

@@ -2,6 +2,8 @@
 #![no_std]
 
 use oes_arch as _;
+use oes_kernel_core as _; // forces the mem functions being linked
+use oes_mm_core as _; // Forces #[global_allocator]
 // use oes_arch::common::uefi::main as _;
 /// The entrypoint to the kernel.
 ///
