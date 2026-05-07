@@ -10,8 +10,9 @@ workspace = true
 [dependencies]
 uefi = {workspace = true, optional = true}
 bytemuck = {workspace = true}
+multiboot2 = {workspace = true, optional = true}
 [features]
 uefi = ["dep:uefi"]
-multiboot = []
+multiboot2 = ["dep:multiboot2"]
 [build-dependencies]
 bindgen = "0.72.1"

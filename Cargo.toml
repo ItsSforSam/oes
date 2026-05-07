@@ -27,11 +27,19 @@ bytemuck = {version = "1", default-features = false, features = ["derive"]}
 spin = {version = "0.10", default-features = false}
 cc = {version = "1", features = ["parallel"]} # for build scripts
 ringbuf = {version = "0.4.8", default-features = false}
+multiboot2 = {version = "0.24.1",default-features = false}
 [workspace.lints.clippy]
 arithmetic_side_effects = "deny"
 # Default usually implies no major allocations take place, which can simply not be true
 new_without_default = "allow"
 
+[workspace.lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    # bochs option is only available on x86, when using the bochs emulator
+    # Defaults to a pseudo breakpoint
+    'cfg(breakpoint_type, values("bochs"))',
+    ]
 [profile.dev]
 panic = "abort"
 
