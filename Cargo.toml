@@ -10,7 +10,8 @@ members = [
     "arch/common",
     "arch/x86",
     "drivers/core",
-    "kernel/core"
+    "kernel/core",
+    "kernel/macros",
     ]
 default-members = ["init/start"]
 
@@ -39,6 +40,10 @@ check-cfg = [
     # bochs option is only available on x86, when using the bochs emulator
     # Defaults to a pseudo breakpoint
     'cfg(breakpoint_type, values("bochs"))',
+    'cfg(docrs)',
+    # Document certain functions which shouldn't be used by most
+    # developers. Such as functions that shouldn't be called inside of rust
+    'cfg(document_niche)',
     ]
 [profile.dev]
 panic = "abort"

@@ -2,9 +2,11 @@
 #![feature(allocator_api)]
 #![feature(linkage)]
 #![feature(core_intrinsics)]
+#![feature(macro_metavar_expr)]
 #![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![no_std]
 pub mod error;
+pub mod marker;
 pub mod panicking;
 pub mod printk;
 pub mod sched;

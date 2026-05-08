@@ -13,6 +13,7 @@ cfg-if = {workspace = true}
 # Not a workspace dependency since we only need back traces defined in one place, ie panic handler
 # The only crate we want to keep defaults as it won't pull in
 unwinding = {version = "0.2",default-features = false, features = ["personality","unwinder","fde-static"]}
+oes-macros = {path = "../macros"}
 [lints]
 workspace = true
 

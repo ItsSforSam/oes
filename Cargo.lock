@@ -296,9 +296,19 @@ version = "0.0.0"
 dependencies = [
  "cfg-if",
  "oes-drivers-core",
+ "oes-macros",
  "ringbuf",
  "spin",
  "unwinding",
+]
+
+[[package]]
+name = "oes-macros"
+version = "0.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
