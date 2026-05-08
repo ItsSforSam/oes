@@ -262,7 +262,6 @@ version = "0.0.0"
 dependencies = [
  "bytemuck",
  "cc",
- "cfg-if",
  "x86_64",
 ]
 

@@ -5,6 +5,7 @@
 #![feature(arbitrary_self_types_pointers)]
 // NOTE: due to how optimization passes work, builtins can still be called
 // These simply get hindered...slightly. These are used for the mem module which contain alternatives to
+// Rust's compiler
 #![no_builtins]
 pub(crate) mod interrupts;
 pub mod mem;
@@ -45,7 +46,16 @@ pub unsafe fn init_hardware() {
 
 
 }
-
+/// Enters [real mode] temporary then enters back into [Protected Mode]
+///
+///
+/// # SAFETY
+///
+/// [real mode]: https://wiki.osdev.org/Real_Mode#Switching_from_Protected_Mode_to_Real_Mode
+/// [Protected Mode]:https://wiki.osdev.org/Protected_Mode
+unsafe fn enter_real_mode<F: FnOnce()>(func: F) {
+    x86_64::instructions::bochs_breakpoint();
+}
 unsafe extern "C" fn __x86_store_multiboot2(ptr: *const ()) {}
 
 core::arch::global_asm! {
@@ -121,4 +131,17 @@ unsafe extern "custom" fn _start() {
     kernel_main = sym start_kernel,
     options(att_syntax)
         }
+}
+/// Is a breakpoint
+#[inline(always)]
+#[expect(clippy::missing_safety_doc)]
+pub fn breakpoint() {
+    cfg_if::cfg_if! {
+        if #[cfg(breakpoint_type = "bochs")] {
+
+            unsafe {core::arch::asm!("xchgw %bx, %bx",options(nomem, nostack, preserves_flags,att_syntax))};
+        } else { // a pseudo breakpoint
+            unsafe {core::arch::asm!("1: jmp 1b",options(nomem, nostack, preserves_flags,att_syntax))}
+        }
+    }
 }
