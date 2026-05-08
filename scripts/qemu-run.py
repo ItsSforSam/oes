@@ -25,14 +25,11 @@ def _get_parser()->argparse.ArgumentParser:
     parser.suggest_on_error = True # If available, enable
     exclusive = parser.add_mutually_exclusive_group()
     exclusive.add_argument(
-        *[
-            "--path"
-        ],
+            "--path",
         help="The path of the compiled binary",
         type=Path,
-        required=True,
+        # required=True,
 # metavar="triple",
-        type=Path
     )
     exclusive.add_argument(
         *[
