@@ -40,10 +40,59 @@ macro_rules! define_err {
             }
         }
     }
+
     impl ::core::error::Error for Errno{}
 
-}}
 
+    def_from_into!(
+        (u8, i8, u16, i16, u32, i32, u64, i64, usize, isize);
+
+    );
+}}
+macro_rules! def_from_into {
+    (
+        $($name:ident => $No:literal;)*
+
+        ( $num:ty, $($other:tt),* );
+
+
+    ) => {
+        $(
+            impl ::core::convert::TryFrom<$num> for Errno {
+                type Error = FromIntError;
+                fn try_from(__value: $t) -> Result<Self,Self::Error>{
+                    match __value{
+                    $(
+                        $No => Ok(Errno::$name),
+                    )*
+                    _ => Err(FromIntError(()))
+
+            }
+        }
+    }
+            impl ::core::convert::TryFrom<::core::num::NonZero<$num>> for Errno {
+                type Error = FromIntError;
+                fn try_from(__value: ::core::num::NonZero<$t>) -> Result<Self,Self::Error>{
+                    match __value{
+                    $(
+                        $$No => Ok(Errno::$name),
+                    )*
+                    _ => Err(FromIntError(()))
+
+            }
+        }
+        }
+
+        )*
+        def_from_into!{
+            $(
+                $name => $No;
+            )*
+            ($($other)* );
+        }
+    } /* End of scope */
+
+}
 define_err! {
     NoSys => ENOSYS,   1          "Function/syscall not implemented";
 
@@ -124,5 +173,16 @@ impl ToErrno for Errno {
     #[inline(always)]
     fn as_errno(&self) -> Errno {
         *self
+    }
+}
+
+unsafe impl crate::marker::UAbiBoundary for Errno {}
+
+#[derive(Debug)]
+pub struct FromIntError(());
+impl ::core::error::Error for FromIntError {}
+impl core::fmt::Display for FromIntError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("Invalid Value passed into TryFrom for Errno")
     }
 }
