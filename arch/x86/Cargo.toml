@@ -15,3 +15,4 @@ cc = {workspace = true}
 [dependencies]
 x86_64 = "0.15.4"
 bytemuck = {workspace = true}
+cfg-if = {workspace = true}
