@@ -6,6 +6,7 @@
 //! These are aligned with our `errno.h` file.
 
 // MAKE SURE THEY ARE SYNCED UP WITH errno.h
+//@TODO: make build script which simply pulls the values from errno.h
 macro_rules! define_err {
     (
         // () => {
@@ -29,6 +30,22 @@ macro_rules! define_err {
     const _:() = {
         $(::core::assert!($No != 0, );)*
     };
+    // Errno, if interpreted as signed, cannot be able to be interpreted as a
+    // negative
+    // As well as any user-api non-error cannot be withen this range as well
+    // this is just due that we pass -Errno into the result register
+    // also to note, the guaranteed minimum size for Errno is 16 bits due
+    // to there being 143 variants of Errno defined by POSIX currently
+    // and there can be more added (as we don't define all of them, as kernel space
+    // doesn't need all of them, currently)
+    //
+    // We do this compile time check, even tho it's most likely not ever going to be reached
+    // but doing this chec
+    const _:() = {
+        $(
+            ::core::assert!(($No as i16) > 0, ::core::stringify!(Errno::$name value breaks userland guarantees ));
+        )*
+    };
     impl ::core::fmt::Display for Errno{
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
             use Errno as e;
@@ -45,23 +62,48 @@ macro_rules! define_err {
 
 
     def_from_into!(
-        (u8, i8, u16, i16, u32, i32, u64, i64, usize, isize);
+        $(
+            $name => $No;
+        )*
+        @end_of_errno
+        u8, u16, i16, u32, i32, u64, i64, usize, isize
+
 
     );
 }}
 macro_rules! def_from_into {
+
     (
-        $($name:ident => $No:literal;)*
-
-        ( $num:ty, $($other:tt),* );
-
+        $(
+            $name:ident => $No:literal;
+        )*
+        @end_of_errno
 
     ) => {
-        $(
-            impl ::core::convert::TryFrom<$num> for Errno {
+        /* */
+    };
+    (
+        $($name:ident => $No:literal;)*
+        @end_of_errno
+        $num:ty
+    ) => {
+
+        impl ::core::convert::TryFrom<$num> for Errno {
                 type Error = FromIntError;
-                fn try_from(__value: $t) -> Result<Self,Self::Error>{
+                fn try_from(__value: $num) -> Result<Self,Self::Error>{
                     match __value{
+                    $(
+                        $No => ::core::result::Result::Ok(Errno::$name),
+                    )*
+                    _ => ::core::result::Result::Err(FromIntError(()))
+
+            }
+        }
+    }
+            impl ::core::convert::TryFrom<::core::num::NonZero<$num>> for Errno {
+                type Error = FromIntError;
+                fn try_from(__value: ::core::num::NonZero<$num>) -> Result<Self,Self::Error>{
+                    match __value.get(){
                     $(
                         $No => Ok(Errno::$name),
                     )*
@@ -69,30 +111,72 @@ macro_rules! def_from_into {
 
             }
         }
-    }
-            impl ::core::convert::TryFrom<::core::num::NonZero<$num>> for Errno {
+        }
+        // No need to
+
+    };
+    (
+        $($name:ident => $No:literal;)*
+        @end_of_errno
+        $num:ty, $($other:tt)*
+
+
+    ) => {
+
+
+        impl ::core::convert::TryFrom<$num> for Errno {
                 type Error = FromIntError;
-                fn try_from(__value: ::core::num::NonZero<$t>) -> Result<Self,Self::Error>{
+                fn try_from(__value: $num) -> Result<Self,Self::Error>{
                     match __value{
                     $(
-                        $$No => Ok(Errno::$name),
+                        $No => ::core::result::Result::Ok(Errno::$name),
                     )*
-                    _ => Err(FromIntError(()))
+                    _ => ::core::result::Result::Err(FromIntError(()))
+
+                }
+            }
+        }
+            impl ::core::convert::TryFrom<::core::num::NonZero<$num>> for Errno {
+                type Error = FromIntError;
+                fn try_from(__value: ::core::num::NonZero<$num>) -> Result<Self,Self::Error>{
+                    match __value.get(){
+                    $(
+                        $No => ::core::result::Result::Ok(Errno::$name),
+                    )*
+                    _ => ::core::result::Result::Err(FromIntError(()))
 
             }
         }
         }
+        // impl ::core::convert::From<Errno> for $num {
 
-        )*
+        //         fn from(__value: Errno) -> $num {
+        //             __value as $num
+        //         }
+
+        //     }
+
+        // };
+        //     impl ::core::convert::From<Errno> for ::core::num::NonZero<$num> {
+
+        //         fn from(__value: Errno) -> Self {
+        //           core::num::NonZero::new_unchecked(__value as _ )
+        //         }
+        //     }
+
         def_from_into!{
             $(
                 $name => $No;
             )*
-            ($($other)* );
+            @end_of_errno
+            $(
+                $other
+            )*
+
         }
+    }
     } /* End of scope */
 
-}
 define_err! {
     NoSys => ENOSYS,   1          "Function/syscall not implemented";
 
@@ -153,6 +237,15 @@ NameTooLong => ENAMETOOLONG,    141 "File name is too long";
 NotRecoverable => ENOTRECOVERABLE, 143 "State not recoverable";
 
 }
+impl core::ops::Neg for Errno {
+    type Output = i16;
+    /// This will coercions [`Errno`] into the smallest
+    fn neg(self) -> Self::Output {
+        let r: i16 = self as i16;
+        // Compile time check says Errno cannot be reach the bound
+        unsafe { r.unchecked_neg() }
+    }
+}
 
 pub trait ToErrno {
     /// Converts [`Self`] into [`Errno`].
@@ -184,5 +277,24 @@ impl ::core::error::Error for FromIntError {}
 impl core::fmt::Display for FromIntError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str("Invalid Value passed into TryFrom for Errno")
+    }
+}
+/// A trait that allows converting [`Result`]s and [`Option`]s into a
+/// compatible user land
+///
+/// This trait is [sealed] due to how easy it is to go wrong.
+/// Due to that, if this trait is ever, not sealed in the future, this will be a
+/// `unsafe` trait
+///
+/// [sealed]: https://predr.ag/blog/definitive-guide-to-sealed-traits-in-rust/
+pub trait IntoUAbi<T: Sized + crate::marker::UAbiBoundary>: crate::private::Sealed {
+    #[must_use]
+    fn into_user_int(self) -> T;
+}
+impl<T, E> crate::private::Sealed for Result<T, E> {}
+impl<T: Sized + crate::marker::UAbiBoundary + Into<T>> IntoUAbi<T> for Result<T, Errno> {
+    ///
+    fn into_user_int(self) -> T {
+        todo!()
     }
 }
