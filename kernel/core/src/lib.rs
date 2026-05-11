@@ -1,8 +1,9 @@
 #![feature(negative_impls)]
-#![feature(allocator_api)]
+// #![feature(allocator_api)]
 #![feature(linkage)]
 #![feature(core_intrinsics)]
-#![feature(macro_metavar_expr)]
+#![feature(never_type)]
+#![feature(ptr_metadata)]
 #![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![no_std]
 pub mod error;
@@ -17,6 +18,8 @@ extern crate alloc as liballoc;
 pub mod alloc;
 
 pub mod prelude {
+    pub use crate::error::IntoUAbi as _;
+    pub use crate::error::{Errno, ToErrno};
     #[cfg(feature = "alloc")]
     pub use liballoc::boxed::Box;
 }
@@ -32,4 +35,9 @@ pub mod prelude {
 #[unsafe(no_mangle)]
 pub unsafe fn abort() -> ! {
     core::intrinsics::abort()
+}
+
+pub(crate) mod private {
+    /// Internal Sealed crate
+    pub trait Sealed {}
 }
