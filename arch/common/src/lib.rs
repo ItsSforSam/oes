@@ -9,8 +9,6 @@ unsafe extern "C-unwind" {
     #[allow(unused)]
     pub(crate) unsafe fn start_kernel() -> !;
 }
-#[cfg(feature = "multiboot")]
-pub mod multiboot;
 #[cfg(feature = "uefi")]
 pub mod uefi;
 
