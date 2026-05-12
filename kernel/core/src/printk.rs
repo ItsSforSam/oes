@@ -1,4 +1,6 @@
 //! Provides the [`print!`] and [`println!`] macros
+//!
+// ! [`println!`]: crate:println!
 pub use crate::prelude::*;
 use core::fmt;
 use liballoc::boxed::Box;
