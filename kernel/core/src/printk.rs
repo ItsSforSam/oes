@@ -1,11 +1,12 @@
 //! Provides the [`print!`] and [`println!`] macros
 //!
-// ! [`println!`]: crate:println!
+//! [`print!`]: crate::print
+//! [`println!`]: crate::println
 pub use crate::prelude::*;
 use core::fmt;
 use liballoc::boxed::Box;
 use oes_drivers_core::io::{self, Write, no_op};
-/// internal
+
 #[doc(hidden)]
 pub fn _print(msg: fmt::Arguments<'_>) {}
 
@@ -13,6 +14,7 @@ pub fn _print(msg: fmt::Arguments<'_>) {}
 macro_rules! print {
     ($($args:tt)*) => {$crate::printk::_print(::core::format_args!($($arg)*))};
 }
+#[doc(alias = "printk")]
 #[macro_export]
 macro_rules! println {
     () => {$crate::print!("\n")};
@@ -22,11 +24,12 @@ macro_rules! println {
 ///
 /// This is perfect if you don't want any special formatting
 ///
-/// Returns
+/// # Returns
 /// How many bytes written
 ///
 /// It returns [`None`] if couldn't get internal lock. Which could mean a deadlock occurred
-pub fn printk<T: AsRef<[u8]>>(msg: T) -> Option<usize> {
+#[expect(unused, reason = "TODO")]
+pub fn printk<T: AsRef<str>>(msg: T) -> Option<usize> {
     for _ in 0..10000 {
         //     match WRITER.try_lock() {
         //         None => continue,
@@ -44,19 +47,28 @@ pub fn printk<T: AsRef<[u8]>>(msg: T) -> Option<usize> {
 /// This shouldn't be called in rust but this instead is supposed to document
 /// safety requirements when outside of Rust (like C or assembly)
 ///
-/// *`string` should point to a valid string up to `size`. `size` is bytes
+/// # Arguments
+/// * `size` is bytes
+/// * `string` is the start of a UTF-8 encoding string
+/// # Safety
+///
+/// *`string` should point to a valid string up to `size` bytes.
+/// ** Unless size is zero, in which,`string` is allowed to be [dangling] but not null
 ///
 /// # Returns
 /// * How many bytes written.
 /// * Unless [`usize::MAX`] (or -1 is signed), An error occurred (Equivalent to [`printk`] return [`None`])
-#[deprecated = "Use normal `printk` function when interfacing in Rust"]
+///
+/// [dangling]: core::ptr::dangling
+#[deprecated(note = "Use normal `printk` function when interfacing in Rust", suggestion = "printk")]
 #[unsafe(export_name = "printk")]
+#[expect(unused)]
 pub unsafe extern "C" fn _printk(level: u8, string: *const u8, size: usize) -> usize {
     assert!(!string.is_null());
-
-    // SAFETY: caller guarantees that the pointer points to a valid UTF-8 String
-    // from string..size
-    let buf = unsafe { str::from_utf8_unchecked(core::slice::from_raw_parts(string, size)) };
+    // SAFETY: Caller guarantees the `string` is valid up-to `size` bytes
+    let input = unsafe { core::slice::from_raw_parts(string, size) };
+    // SAFETY: caller guarantees that the slice of memory is valid UTF-8
+    let buf = unsafe { str::from_utf8_unchecked(input) };
     printk(buf).unwrap_or(usize::MAX) as usize
 }
 
@@ -73,13 +85,9 @@ pub unsafe extern "C" fn _printk(level: u8, string: *const u8, size: usize) -> u
 // }
 
 mod writer {
-    use super::{Box, Write, io};
+    use super::{Box, Write};
     use crate::prelude::*;
-    use core::{
-        fmt::Debug,
-        ops::{Deref, DerefMut},
-        ptr::{NonNull, null_mut},
-    };
+    use core::ops::{Deref, DerefMut};
 
     use oes_drivers_core::io::no_op;
     use spin::mutex::{TicketMutex, TicketMutexGuard};

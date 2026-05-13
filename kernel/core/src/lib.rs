@@ -4,6 +4,7 @@
 #![feature(core_intrinsics)]
 #![feature(never_type)]
 #![feature(ptr_metadata)]
+#![feature(deprecated_suggestion)]
 #![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![no_std]
 pub mod error;
