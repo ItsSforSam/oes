@@ -1,6 +1,6 @@
 [alias]
 # Sense we arn't building for std, just to avoid the additional overhead we build for a single target
-c = "clippy --target=x86_64-unknown-none --workspace --no-deps"
+c = "clippy --workspace --no-deps"
 
 [unstable]
 
