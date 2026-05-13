@@ -1,14 +1,17 @@
 //! Architecture independent variables
 //!
 #![no_std]
-#![no_main]
-
+#![feature(doc_cfg)] // only needed during docs anyways
+#![feature(fn_ptr_trait)]
 use core::{fmt, marker::PhantomData};
 unsafe extern "C-unwind" {
     // Read it's docs to ensure
     #[allow(unused)]
     pub(crate) unsafe fn start_kernel() -> !;
 }
+#[doc(cfg(miri))]
+#[cfg(any(miri, doc))]
+pub mod miri;
 #[cfg(feature = "uefi")]
 pub mod uefi;
 
@@ -19,10 +22,13 @@ pub mod uefi;
 /// [`__IncompleteArrayField`]:https://rust-lang.github.io/rust-bindgen/using-fam.html#__incompletearrayfield
 #[repr(transparent)]
 #[derive(Default)]
-pub struct IncompleteArrayField<T> {
+// mark as dead code as it's not really needed
+// and slate for it's removal if it has no use
+struct IncompleteArrayField<T> {
     inner: [T; 0],
     _marker: PhantomData<T>,
 }
+#[expect(dead_code)]
 impl<T> IncompleteArrayField<T> {
     #[inline]
     pub const fn new() -> Self {
