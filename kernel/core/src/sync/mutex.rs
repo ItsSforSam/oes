@@ -65,7 +65,7 @@ impl<T> Mutex<T> {
     ///
     /// This is simply here for completeness, you may
     /// want [`.as_mut_ptr()`] instead. Look at [`.as_mut_ptr()`] for
-    /// more infomation
+    /// more information
     ///
     /// # Safety
     /// As with all raw pointers, avoid race conditions, and avoid use
