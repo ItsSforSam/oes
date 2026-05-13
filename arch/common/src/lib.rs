@@ -1,8 +1,9 @@
 //! Architecture independent variables
 //!
 #![no_std]
+#![feature(optimize_attribute)]
 #![feature(doc_cfg)] // only needed during docs anyways
-#![feature(fn_ptr_trait)]
+// #![cfg_attr(not(doc), expect(unused_features))]
 use core::{fmt, marker::PhantomData};
 unsafe extern "C-unwind" {
     // Read it's docs to ensure
