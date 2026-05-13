@@ -9,6 +9,7 @@
     "rust-analyzer.cargo.allTargets": false,
     "rust-analyzer.check.command": "clippy",
     "cSpell.words": [
+        "miri",
         "Printk",
         "syscall",
         "Zeroable"
