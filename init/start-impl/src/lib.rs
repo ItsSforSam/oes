@@ -19,7 +19,7 @@ use oes_mm_core as _; // Forces #[global_allocator]
 /// When this function is called the following must be met:
 /// * Called 16 bit aligned (C abi requires this)
 /// * Memory is properly segmented
-///
+/// * CPU is in protected Mode (or the equivalent for the architecture)
 /// * Paging is setup
 // Makes sure each arch updates this if a signature changes
 #[unsafe(no_mangle)]

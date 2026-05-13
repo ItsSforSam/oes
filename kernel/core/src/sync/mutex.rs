@@ -32,16 +32,34 @@ impl<T> Mutex<T> {
             data: UnsafeCell::new(value),
         }
     }
-    pub fn lock(&self) -> MutexGuard<T> {
+    pub fn lock(&self) -> MutexGuard<'_, T> {
+        // Acq by itself makes store relaxed
         let ticket = self.next_ticket.fetch_add(1, Ordering::AcqRel);
         while self.next_serving.load(Ordering::Acquire) != ticket {
             crate::sched::yield_now();
         }
-        todo!()
+        MutexGuard {
+            ticket,
+            next_serving: &self.next_serving,
+            // SAFETY: we are the next ticket in the que and is finally server
+            // Every other thread has a different ticket number
+            // so we have mutual access
+            data: unsafe { &mut *self.data.get() },
+        }
     }
-    pub fn try_lock(&self) -> Option<Mutex<T>> {
-        let mut prev = self.next_ticket.load(Ordering::SeqCst);
-        todo!()
+    pub fn try_lock(&self) -> Option<MutexGuard<'_, T>> {
+        let ticket = self
+            .next_ticket
+            .try_update(Ordering::SeqCst, Ordering::SeqCst, |prev| Some(prev.wrapping_add(1)))
+            .ok();
+        ticket.map(|ticket| MutexGuard {
+            ticket,
+            next_serving: &self.next_serving,
+            // SAFETY: we have the golden ticket!
+            // We have a ticket == next_serving ticket. No other thread has the same ticket id as this thread.
+            // so we can safely say that we have exclusive access
+            data: unsafe { &mut *self.data.get() },
+        })
     }
     /// Consumes the [`Mutex`] returning the underlying value
     #[inline]
@@ -139,7 +157,9 @@ impl<T> Mutex<T> {
         self.data.get()
     }
     /// Forces an unlock so the next  
-    pub unsafe fn force_unlock(&self) {}
+    pub unsafe fn force_unlock(&self) {
+        self.next_serving.fetch_add(1, Ordering::Release);
+    }
 }
 
 pub struct MutexGuard<'a, T: ?Sized> {
@@ -147,12 +167,51 @@ pub struct MutexGuard<'a, T: ?Sized> {
     next_serving: &'a AtomicU16,
     data: &'a mut T,
 }
+impl<T: ?Sized> core::ops::Drop for MutexGuard<'_, T> {
+    fn drop(&mut self) {
+        let next_ticket = self.ticket.wrapping_add(1);
+        self.next_serving.store(next_ticket, Ordering::Release);
+    }
+}
+impl<'a, T> MutexGuard<'a, T> {
+    /// Leaks the guard, yielding the mutable data underneath
+    ///
+    /// Note this will have [`Mutex`] locked permanently, unless [`Mutex::force_unlock`] is called
+    pub fn leak(this: Self) -> &'a mut T {
+        let data = &raw mut *this.data; // Avoids double aliasing
+        core::mem::forget(this);
+        // SAFETY: retrieved
+        unsafe { &mut *data }
+    }
+}
+impl<T: ?Sized> core::ops::Deref for MutexGuard<'_, T> {
+    type Target = T;
 
+    fn deref(&self) -> &Self::Target {
+        self.data
+    }
+}
+
+impl<T: ?Sized> core::ops::DerefMut for MutexGuard<'_, T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.data
+    }
+}
 impl<T: Default> Default for Mutex<T> {
     fn default() -> Self {
         Mutex::new(Default::default())
     }
 }
-
+/// We hold the standard as POSIX threads here.
+///
+// This is mostly done due to sending a guard to a different thread, that thread
+// panics, so our MutexGuard is never dropped
+///
+/// This requires them to release the lock which they were required
+///
+/// Also, it's sound for a drop destructor to not run, as well, (depending
+/// on the platform and implementation) a panic can not call drop code.
+impl<T: ?Sized> !Send for MutexGuard<'_, T> {}
+unsafe impl<T: ?Sized + Sync> Sync for MutexGuard<'_, T> {}
 unsafe impl<T: ?Sized + Send> Sync for Mutex<T> {}
 unsafe impl<T: ?Sized + Send> Send for Mutex<T> {}
