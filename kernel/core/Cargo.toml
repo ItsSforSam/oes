@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 # Be carful adding ANY workspace dependencies
+oes-arch = {path = "../../arch"}
 oes-drivers-core = {path = "../../drivers/core"}
 spin = {workspace = true, features = ["mutex","ticket_mutex","use_ticket_mutex"]}
 ringbuf = {workspace = true}
