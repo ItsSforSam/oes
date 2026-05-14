@@ -294,6 +294,7 @@ dependencies = [
 name = "oes-kernel-core"
 version = "0.0.0"
 dependencies = [
+ "bytemuck",
  "cfg-if",
  "log",
  "oes-arch",
