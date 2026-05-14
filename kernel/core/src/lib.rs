@@ -11,7 +11,6 @@
 #![no_std]
 pub mod device;
 pub mod error;
-pub mod kobj;
 pub mod marker;
 pub mod panicking;
 pub mod printk;
