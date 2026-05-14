@@ -1,6 +1,7 @@
 // SAFETY: we implement this elsewhere
 
-use liballoc::alloc;
+#[doc(inline)]
+pub use liballoc::alloc::*;
 unsafe extern "Rust" {
     pub safe fn panic_oom() -> !;
 }
@@ -10,5 +11,3 @@ unsafe extern "Rust" {
 // fn oom(lay: alloc::Layout) -> ! {
 
 // }
-
-
