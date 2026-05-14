@@ -1,3 +1,5 @@
+use crate::private::Sealed;
+
 /// A marker trait that says that a given trait can be passed to and from
 ///
 /// user land and Kernel land and vice versa
@@ -22,7 +24,7 @@ pub trait Number:
     + core::ops::BitXor<Output = Self>
     + core::ops::Shl<usize, Output = Self>
     + core::ops::Shr<usize, Output = Self>
-    + crate::private::Sealed
+    + Sealed
 {
 }
 /// Use of floating point numbers should be limited,
@@ -87,16 +89,16 @@ unsafe impl<T: UAbiBoundary, const N: usize> UAbiBoundary for [T; N] {}
 
 // unsafe impl<T: UAbiBoundary> UAbiBoundary for Option<NonZero<T>> {}
 
-impl crate::private::Sealed for u8 {}
-impl crate::private::Sealed for i8 {}
-impl crate::private::Sealed for u16 {}
-impl crate::private::Sealed for i16 {}
-impl crate::private::Sealed for u32 {}
-impl crate::private::Sealed for i32 {}
-impl crate::private::Sealed for u64 {}
-impl crate::private::Sealed for i64 {}
-impl crate::private::Sealed for usize {}
-impl crate::private::Sealed for isize {}
+impl Sealed for u8 {}
+impl Sealed for i8 {}
+impl Sealed for u16 {}
+impl Sealed for i16 {}
+impl Sealed for u32 {}
+impl Sealed for i32 {}
+impl Sealed for u64 {}
+impl Sealed for i64 {}
+impl Sealed for usize {}
+impl Sealed for isize {}
 
 impl Number for u8 {}
 impl Number for i8 {}
