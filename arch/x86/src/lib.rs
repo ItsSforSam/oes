@@ -7,6 +7,8 @@
 // These simply get hindered...slightly. These are used for the mem module which contain alternatives to
 // Rust's compiler
 #![no_builtins]
+
+use core::fmt;
 pub(crate) mod interrupts;
 pub mod mem;
 pub mod paging;
@@ -145,3 +147,52 @@ pub fn breakpoint() {
         }
     }
 }
+
+pub mod unwind;
+
+#[derive(Clone, Default)]
+#[repr(transparent)]
+pub struct Registers([RegistersInner; 1]);
+#[derive(Clone, Default)]
+#[repr(C)]
+#[cfg(target_arch = "x86_64")]
+pub struct RegistersInner {
+    pub rbx: usize,
+    pub rsp: usize,
+    pub rbp: usize,
+    pub r12: usize,
+    pub r13: usize,
+    pub r14: usize,
+    pub r15: usize,
+    pub rip: usize,
+}
+impl core::ops::Deref for Registers {
+    type Target = RegistersInner;
+
+    fn deref(&self) -> &Self::Target {
+        &(self.0[0])
+    }
+}
+
+impl RegistersInner {
+    fn debug_inner(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        todo!()
+        // f.debug_struct("RegistersInner")
+        // .field(name, value)        .finish_non_exhaustive()
+        // f.debug_struct("RegistersInner").field("rbx", &self.rbx).field("rsp", &self.rsp).field("rbp", &self.rbp).field("r12", &self.r12).field("r13", &self.r13).field("r14", &self.r14).field("r15", &self.r15).field("rip", &self.rip).finish()
+    }
+}
+
+impl fmt::Debug for RegistersInner {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.debug_inner(f)
+    }
+}
+impl fmt::Octal for RegistersInner {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        todo!()
+    }
+}
+
+#[cfg(target_arch = "x86")]
+pub struct RegistersInner {}
