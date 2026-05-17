@@ -11,5 +11,6 @@ indent_style = space
 charset = utf-8
 
 # Makefiles require tabs
-[Makefile]
+[makefile]
 indent_style = tab
+indent_size = 4
