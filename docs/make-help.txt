@@ -1,0 +1,16 @@
+* oes-kernel - Compile the kernel (default)
+	
+* fetch - Fetches kernel dependencies.
+	  This will fetch based on the `target` environment variable if defined.
+* fetch-all - Same as `fetch` but fetches for all dependencies 
+	
+* doc* - Documents kernel\'s internal api functions, we have several "subcommands" 
+    ** The normal `doc` target, documents the normal functions and types. It will include dependencies that OES uses.
+    ** The `doc-minimal` target documents the bare minimal, excluding dependencies.
+    ** The `doc-niche` will include more 'niche' functions and types. This is similar to cargo's document-private-items
+       flag, but will not include functions and types which are more implementation details.
+       A 'niche' function or type are details that need to expand multiple crates, but shouldn't be called
+       by the average function. Like startup code, kernel_start, etc. Any of these functions should have the
+       same stability requirements as a publicly exported function. Changes to safety requirements should notify necessary people
+
+* help - display this message
