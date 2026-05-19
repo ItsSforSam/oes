@@ -7,6 +7,9 @@
 #![feature(abi_custom)]
 #![feature(abi_x86_interrupt)]
 #![feature(arbitrary_self_types_pointers)]
+#![feature(linkage)]
+#![feature(core_intrinsics)]
+#![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![allow(unused_features, reason = "Not all architectures use all features")]
 // NOTE: due to how optimization passes work, builtins can still be called
 // These simply get hindered...slightly. These are used for the mem module which contain alternatives to
@@ -154,11 +157,22 @@ pub mod common {
         unsafe { current::mem::strlen(s) }
     }
 
-    unsafe extern "Rust" {
-        /// See [`oes-kernel-core::abort()`] for details, as this is an alias to that
-        ///
-        /// [`oes-kernel-core::abort()`]
-        pub unsafe fn abort() -> !;
+    /// This will abort the kernel. Shut off the system, no questions
+    ///
+    /// # SAFETY
+    /// This function doesn't cause any issues of it's own
+    /// but this can cause corruption with file systems with partially written data.
+    ///
+    /// If unrecoverable, use [`panic!`] instead
+    ///
+    ///
+    /// Each architecture should provide a dedicated abort instruction
+    // We mark as weak so it can be overriden, and miri struggles with weak
+    // so if reached, it will understand the goal with it being a intrinsics
+    #[linkage = "weak"]
+    #[unsafe(no_mangle)]
+    pub unsafe fn abort() -> ! {
+        core::intrinsics::abort()
     }
 }
 #[cfg(test)]
