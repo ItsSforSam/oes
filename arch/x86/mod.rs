@@ -1,10 +1,3 @@
-#![no_std]
-#![no_main]
-// NOTE: due to how optimization passes work, builtins can still be called
-// These simply get hindered...slightly. These are used for the mem module which contain alternatives to
-// Rust's compiler
-#![no_builtins]
-
 use core::fmt;
 pub(crate) mod interrupts;
 pub mod mem;
@@ -21,9 +14,6 @@ static mut IDT: interrupts::Idt = interrupts::Idt::empty();
 // unsafe extern "custom" {
 //     unsafe fn _start() -> !;
 // }
-unsafe extern "C" {
-    unsafe fn start_kernel() -> !;
-}
 
 /// Initialize
 ///
@@ -127,13 +117,13 @@ unsafe extern "custom" fn _start() {
     #[cfg(not(target_os = "uefi"))]
     ".size _start, . - _start",
     mboot = sym __x86_store_multiboot2,
-    kernel_main = sym start_kernel,
+    kernel_main = sym crate::start_kernel,
     options(att_syntax)
         }
 }
 /// Is a breakpoint
 #[inline(always)]
-#[expect(clippy::missing_safety_doc)]
+#[expect(clippy::undocumented_unsafe_blocks)]
 pub fn breakpoint() {
     cfg_if::cfg_if! {
         if #[cfg(breakpoint_type = "bochs")] {

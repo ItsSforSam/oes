@@ -7,7 +7,21 @@
 #![feature(abi_custom)]
 #![feature(abi_x86_interrupt)]
 #![feature(arbitrary_self_types_pointers)]
-#![expect(unused_features, reason = "Not all architectures use all features")]
+#![allow(unused_features, reason = "Not all architectures use all features")]
+// NOTE: due to how optimization passes work, builtins can still be called
+// These simply get hindered...slightly. These are used for the mem module which contain alternatives to
+// Rust's compiler
+// There is no way to narrow this attribute to function level or even module level
+#![no_builtins]
+
+unsafe extern "C-unwind" {
+    /// Read it's docs to ensure safety is upheld
+    /// at it's [actual docs]
+    ///
+    /// [actual docs]: ::oes_init_start_impl::start_kernel
+    #[allow(unused)]
+    pub unsafe fn start_kernel() -> !;
+}
 cfg_if::cfg_if! {
     if #[cfg(target_arch = "x86_64")]{
         #[path = "../x86/mod.rs"]

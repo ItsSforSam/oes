@@ -1,13 +1,8 @@
 //! Architecture independent variables
 //!
-
 // #![cfg_attr(not(doc), expect(unused_features))]
+pub(crate) use crate::start_kernel;
 use core::{fmt, marker::PhantomData};
-unsafe extern "C-unwind" {
-    // Read it's docs to ensure
-    #[allow(unused)]
-    pub(crate) unsafe fn start_kernel() -> !;
-}
 #[doc(cfg(miri))]
 #[cfg(any(miri, doc))]
 pub mod miri;
