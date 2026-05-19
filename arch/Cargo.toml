@@ -8,11 +8,16 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-oes-arch-common ={path = "common"}
+uefi = {workspace = true, optional = true}
+multiboot2 = {workspace = true, optional = true}
 cfg-if = {workspace = true}
 bytemuck = {workspace = true}
+
 [target.'cfg(target_arch = "x86_64")'.dependencies]
-oes-arch-x86 = {path = "x86"}
-cfg-if = {workspace = true}
+x86_64 = "0.15.4"
 [features]
-uefi = ["oes-arch-common/uefi"]
+uefi = ["dep:uefi"]
+multiboot2 = ["dep:multiboot2"]
+
+[build-dependencies]
+bindgen = "0.72.1"

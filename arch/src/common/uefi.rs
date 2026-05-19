@@ -7,6 +7,6 @@ pub unsafe fn main() -> Status {
 
     // SAFETY: We call this once (in uefi entrypoint)
     // The [`uefi::entry`] calls set_virtual_address_map, which sets this to virtual address space
-    unsafe { crate::start_kernel() };
+    unsafe { crate::common::start_kernel() };
     // Status::SUCCESS
 }
