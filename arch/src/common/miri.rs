@@ -270,7 +270,7 @@ pub fn get_backtrace_size() -> usize {
 /// if `buffer` isn't the size of the result of [`get_backtrace_size()`].
 ///
 /// We attempt to have this function be inlined, so this wouldn't be a cause of a
-/// [TOCTOU][https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use].
+/// [TOCTOU]<https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use>.
 ///
 /// **note:** That's a implementation detail
 #[inline(always)]
