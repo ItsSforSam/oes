@@ -7,8 +7,6 @@ members = [
     "init/start-impl",
     "mm/core",
     "arch",
-    "arch/common",
-    "arch/x86",
     "drivers/core",
     "kernel/core",
     "kernel/macros",

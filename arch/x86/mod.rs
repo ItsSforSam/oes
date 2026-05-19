@@ -1,8 +1,5 @@
 #![no_std]
 #![no_main]
-#![feature(abi_custom)]
-#![feature(abi_x86_interrupt)]
-#![feature(arbitrary_self_types_pointers)]
 // NOTE: due to how optimization passes work, builtins can still be called
 // These simply get hindered...slightly. These are used for the mem module which contain alternatives to
 // Rust's compiler
@@ -168,7 +165,7 @@ pub struct RegistersInner {
 }
 impl core::ops::Deref for Registers {
     type Target = RegistersInner;
-
+    #[inline]
     fn deref(&self) -> &Self::Target {
         &(self.0[0])
     }

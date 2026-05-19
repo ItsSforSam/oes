@@ -14,7 +14,7 @@ unsafe extern "C" {
     pub unsafe fn memcmp(s1: *const u8, s2: *const u8, size: usize) -> i32;
     pub unsafe fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8;
     pub unsafe fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8;
-    pub unsafe fn memset(s: *mut u8, c: crate::mem::c_int, n: usize) -> *mut u8;
+    pub unsafe fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8;
 
     pub unsafe fn strlen(string: *const c_char) -> usize;
 }
