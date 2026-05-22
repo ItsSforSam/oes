@@ -167,8 +167,9 @@ pub mod common {
     ///
     ///
     /// Each architecture should provide a dedicated abort instruction
-    // We mark as weak so it can be overriden, and miri struggles with weak
+    // We mark as weak so it can be overridden, and miri struggles with weak
     // so if reached, it will understand the goal with it being a intrinsics
+    // ...maybe
     #[linkage = "weak"]
     #[unsafe(no_mangle)]
     pub unsafe fn abort() -> ! {
