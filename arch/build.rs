@@ -3,11 +3,14 @@ use std::{env, str::FromStr};
 fn main() {
     let arch = env::var("CARGO_CFG_TARGET_ARCH").expect("Cannot determine architecture");
     let arch = TargetArchitecture::from_str(&arch).unwrap();
-    // this will be where Cargo.toml and build.rs is located
-    // We do this as rustc may be executing in a different directory
-    let dir = std::env::current_dir().unwrap();
-
-    println!("cargo::rustc-link-arg=-T{}/{arch}/ld-oes.ld", dir.display());
+    // If we are apart of libtest, prevent our special linker script, as that
+    // can break compiling
+    if std::env::var("CARGO_FEATURE_LIBTEST").is_err() {
+        // this will be where Cargo.toml and build.rs is located
+        // We do this as rustc may be executing in a different directory
+        let dir = std::env::current_dir().unwrap();
+        println!("cargo::rustc-link-arg=-T{}/{arch}/ld-oes.ld", dir.display());
+    }
 }
 /// Represents all available targets for The Odyssey Entertainment System.
 #[expect(nonstandard_style, reason = "Doesn't read well in context")]

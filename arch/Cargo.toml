@@ -19,5 +19,12 @@ x86_64 = "0.15.4"
 uefi = ["dep:uefi"]
 multiboot2 = ["dep:multiboot2"]
 
+# INTERNAL! USED FOR TESTING
+libtest = []
 [build-dependencies]
 bindgen = "0.72.1"
+
+[[test]]
+name= "oes-arch"
+path = "src/lib.rs"
+required-features = ["libtest"]
