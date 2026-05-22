@@ -279,22 +279,21 @@ impl core::fmt::Display for FromIntError {
         f.write_str("Invalid Value passed into TryFrom for Errno")
     }
 }
-/// A trait that allows converting [`Result`]s and [`Option`]s into a
-/// compatible user land
-///
-/// This trait is [sealed] due to how easy it is to go wrong.
-/// Due to that, if this trait is ever, not sealed in the future, this will be a
-/// `unsafe` trait
-///
-/// [sealed]: https://predr.ag/blog/definitive-guide-to-sealed-traits-in-rust/
-pub trait IntoUAbi<T: Sized + crate::marker::UAbiBoundary>: crate::private::Sealed {
-    #[must_use]
-    fn into_user_int(self) -> T;
+
+unsafe impl crate::traits::IntoUserSpace for () {
+    type Output = usize;
+
+    fn into_userspace(self) -> Self::Output {
+        0
+    }
 }
-impl<T, E> crate::private::Sealed for Result<T, E> {}
-impl<T: Sized + crate::marker::UAbiBoundary + Into<T>> IntoUAbi<T> for Result<T, Errno> {
-    ///
-    fn into_user_int(self) -> T {
-        todo!()
+unsafe impl crate::traits::IntoUserSpace for Result<(), Errno> {
+    type Output = isize;
+    #[expect(clippy::arithmetic_side_effects, reason = "-Errno won't panic")]
+    fn into_userspace(self) -> Self::Output {
+        match self {
+            Ok(_) => 0,
+            Err(e) => (-e) as isize,
+        }
     }
 }

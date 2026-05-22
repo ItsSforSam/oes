@@ -21,8 +21,8 @@ pub mod alloc;
 #[cfg(not(feature = "alloc"))]
 mod alloc;
 pub mod prelude {
-    pub use crate::error::IntoUAbi as _;
     pub use crate::error::{Errno, ToErrno};
+    pub use crate::traits::IntoUserSpace as _;
     #[cfg(feature = "alloc")]
     pub use liballoc::boxed::Box;
 }

@@ -1,3 +1,4 @@
+use crate::marker::UAbiBoundary;
 /// A type which keeps itself reference counted
 ///
 /// # Safety
@@ -20,4 +21,19 @@ pub unsafe trait ReferenceCounted {
     /// # Safety
     /// Callers should not reference there object after
     unsafe fn dec_ref(this: core::ptr::NonNull<Self>);
+}
+
+/// A trait which transfers rust types into Userspace compatible types
+pub unsafe trait IntoUserSpace: Sized {
+    type Output: UAbiBoundary;
+
+    fn into_userspace(self) -> Self::Output;
+}
+#[diagnostic::do_not_recommend]
+unsafe impl<T: UAbiBoundary> IntoUserSpace for T {
+    type Output = Self;
+
+    fn into_userspace(self) -> Self::Output {
+        self
+    }
 }
