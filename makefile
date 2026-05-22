@@ -36,6 +36,7 @@ clean:
 help:
 	@cat ./docs/make-help.txt
 
-
-.PHONEY: default oes-kernel clean doc-minimal help
+test:
+	cargo test -p oes-kernel-core oes-kernel-core
+.PHONEY: default oes-kernel clean doc-minimal help test
 
