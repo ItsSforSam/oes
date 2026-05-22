@@ -7,7 +7,8 @@ use crate::private::Sealed;
 ///
 /// # Safety
 /// When this trait is implemented, you are saying a value can be passed by value
-/// to functions.
+/// to functions, syscalls too and from Userspace without further modification. If
+/// there needs to be modification, implement [`IntoUserSpace`]
 ///
 ///
 pub unsafe trait UAbiBoundary: Sized {}
