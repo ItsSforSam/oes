@@ -1,6 +1,5 @@
-
-#[cfg_attr(not(test), panic_handler)]
-#[cfg_attr(not(test), expect(dead_code))]
+#[panic_handler]
+#[cfg(not(any(test, feature = "libtest")))]
 fn panic_handler(_: &core::panic::PanicInfo) -> ! {
     loop {
         //@TODO: implement proper panic handler
@@ -13,11 +12,10 @@ fn panic_handler(_: &core::panic::PanicInfo) -> ! {
 #[unsafe(no_mangle)]
 #[cfg(target_os = "uefi")]
 pub extern "C" fn __CxxFrameHandler3(
-    _record:usize,
+    _record: usize,
     _frame: usize,
     _context: usize,
-    _dispatcher: usize
-) ->u32 {
+    _dispatcher: usize,
+) -> u32 {
     1 // `ExceptionContinueSearch`
 }
-

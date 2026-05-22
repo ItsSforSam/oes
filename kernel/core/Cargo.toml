@@ -22,3 +22,12 @@ workspace = true
 
 [features]
 alloc = []
+
+# INTERNAL! DON'T ENABLE
+libtest = []
+[[test]]
+name = "oes-kernel-core"
+path = "tests/lib.rs"
+required-features = ["libtest"] 
+[dev-dependencies]
+trybuild = "1.0.116"
