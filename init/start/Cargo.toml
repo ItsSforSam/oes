@@ -8,3 +8,8 @@ oes-init-start-impl = {path = "../start-impl"}
 
 [features]
 uefi =["oes-init-start-impl/uefi"]
+
+[[bin]]
+name = "oes-kernel-start"
+path = "src/main.rs"
+test = false

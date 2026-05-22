@@ -13,3 +13,6 @@ workspace = true
 
 [features]
 uefi = ["oes-arch/uefi"]
+
+[lib]
+test = false
