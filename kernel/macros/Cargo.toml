@@ -1,3 +1,4 @@
+# Tests are under kernel-cores
 [package]
 name = "oes-macros"
 version.workspace = true
@@ -7,7 +8,7 @@ license.workspace = true
 [dependencies]
 proc-macro2 = {version = "1.0"}
 quote = {version = "1.0"}
-syn = {version = "2.0", features = ["full"]}
+syn = {version = "2.0", features = ["full","extra-traits"]}
 
 [lints]
 workspace = true
