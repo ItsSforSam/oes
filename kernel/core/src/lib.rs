@@ -26,7 +26,8 @@ pub mod prelude {
     #[cfg(feature = "alloc")]
     pub use liballoc::boxed::Box;
 }
-
+#[doc(inline)]
+pub use oes_macros::*;
 pub(crate) mod private {
     /// Internal Sealed crate
     pub trait Sealed {}
