@@ -3,7 +3,6 @@
 #![feature(never_type)]
 #![feature(ptr_metadata)]
 #![feature(deprecated_suggestion)]
-#![feature(negative_bounds)]
 #![feature(allocator_api)]
 #![no_std]
 pub mod device;
