@@ -122,7 +122,7 @@ mod writer {
                 inner: TicketMutex::new(None),
             }
         }
-
+        #[expect(unreachable_code)]
         pub fn lock<'a>(&'a self) -> PrintkLock<'a> {
             let mut lock = self.inner.lock();
             todo!();
