@@ -12,13 +12,14 @@ uefi = {workspace = true, optional = true}
 multiboot2 = {workspace = true, optional = true}
 cfg-if = {workspace = true}
 bytemuck = {workspace = true}
-
+spin = {features = ["once"], workspace = true}
 [target.'cfg(target_arch = "x86_64")'.dependencies]
 x86_64 = "0.15.4"
 [features]
 uefi = ["dep:uefi"]
 multiboot2 = ["dep:multiboot2"]
-
+# Expose alloc crate impls
+alloc = []
 # INTERNAL! USED FOR TESTING
 libtest = []
 [build-dependencies]
