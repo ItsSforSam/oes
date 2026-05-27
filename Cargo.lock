@@ -232,6 +232,7 @@ dependencies = [
  "bytemuck",
  "cfg-if",
  "multiboot2",
+ "spin",
  "uefi",
  "x86_64",
 ]
