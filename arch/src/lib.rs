@@ -9,6 +9,8 @@
 #![feature(arbitrary_self_types_pointers)]
 #![feature(linkage)]
 #![feature(core_intrinsics)]
+#![feature(ascii_char)]
+#![feature(allocator_api)]
 #![expect(internal_features, reason = "for core::intrinsics::abort")]
 #![allow(unused_features, reason = "Not all architectures use all features")]
 // NOTE: due to how optimization passes work, builtins can still be called
@@ -16,7 +18,8 @@
 // Rust's compiler
 // There is no way to narrow this attribute to function level or even module level
 #![no_builtins]
-
+#[cfg(feature = "alloc")]
+extern crate alloc;
 unsafe extern "C-unwind" {
     /// Read it's docs to ensure safety is upheld
     /// at it's [actual docs]
@@ -37,6 +40,9 @@ cfg_if::cfg_if! {
 #[path = "common/mod.rs"]
 mod co;
 pub mod common {
+    pub mod ascii;
+    pub mod cmdline;
+
     use super::current;
     #[doc(inline)]
     #[allow(unused_imports)]
